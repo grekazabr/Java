@@ -1,4 +1,3 @@
-
 import java.io.File;
 import java.util.Scanner;
 
@@ -8,13 +7,12 @@ public class Helloworld {
         Scanner in = new Scanner(System. in);
         String path="",menu = "2";
         boolean exitfromprogramcase=false;
-        int os = 0, lengthoffiles = 0, numoffiles = 0, numberofiterationofprogram = 0;
+        int os = 0, lengthoffiles = 0, numberofiterationofprogram = 0;
         for(;menu!="1";){
             exitfromprogramcase = false;
             path = "";
             os = 0;
             lengthoffiles = 0;
-            numoffiles = 0;
             if(numberofiterationofprogram>0)
             {
                     System.out.println("1-exit, 2-continue");
@@ -43,7 +41,7 @@ public class Helloworld {
                                             path = "/";
                                             break;
                                     default:
-                                            System.out.println("I don't know such OS, try again");
+                                            System.out.println("!!!I don't know such OS, try again");
                             }
                     }
                     System.out.println("Write a way to your folder");
@@ -127,19 +125,28 @@ public class Helloworld {
                                     int numberofpageinmenu = 0;
                                     try{
                                         numberofpageinmenu = Integer.parseInt(punktmenuoflists);
-                                        if((numberofpageinmenu<=amountofpages)&&(numberofpageinmenu>0)){
+                                        if((numberofpageinmenu<amountofpages)&&(numberofpageinmenu>0)){
                                            quantityoflist = numberoffilesperpage;
                                            currentdecadeoffiles = (numberofpageinmenu-1)*numberoffilesperpage;
                                            for(int i = 0; i < quantityoflist; i++){
                                                 System.out.println(files[currentdecadeoffiles+i]);
                                             }
-                                        }else{
-                                            System.out.println("the number of page is not avable");
+                                        }
+                                        if((numberofpageinmenu==amountofpages)&&(numberofpageinmenu>0)){
+                                            quantityoflist = amountoffilesonpage;
+                                            currentdecadeoffiles = (numberofpageinmenu-1)*numberoffilesperpage;
+                                            for(int i = 0; i < quantityoflist; i++){
+                                                System.out.println(files[currentdecadeoffiles+i]);
+                                            }
+                                        }
+                                        if(!((numberofpageinmenu<=amountofpages)&&(numberofpageinmenu>0))){
+                                            System.out.println("!!!that number of page is not available, try more");
                                         }
                                     }
-                                    catch(Exception e){
-                                        System.out.println("try more");
-                                    }                         
+                                    catch(NumberFormatException e){
+                                         System.out.println("!!!this case is not available, try more");
+                                    }
+                                                            
                                     break;
                             }
                         }while(!exitfromwhile);
@@ -147,7 +154,7 @@ public class Helloworld {
                     break;
                 }
                 default:{
-                    System.out.println("incorrect case, try again");
+                    System.out.println("!!!incorrect case, try again");
                     break;
                 }
             }
