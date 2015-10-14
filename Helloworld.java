@@ -1,3 +1,4 @@
+
 import java.io.File;
 import java.util.Scanner;
 
@@ -6,14 +7,29 @@ public class Helloworld {
     public static void main(String[] args) {        
         Scanner in = new Scanner(System. in);
         String path="",menu = "2";
-        boolean exitfromprogramcase=false;
-        int os = 0, lengthoffiles = 0, numberofiterationofprogram = 0;
+        boolean exitFromProgramCase=false;
+        int os = 0, lengthOfFiles = 0, numOfFiles = 0, numberOfIterationOfProgram = 0;
+        //allows repeats of programm work
         for(;menu!="1";){
-            exitfromprogramcase = false;
+            exitFromProgramCase = false;
             path = "";
             os = 0;
-            lengthoffiles = 0;
-            if(numberofiterationofprogram>0)
+            lengthOfFiles = 0;
+            numOfFiles = 0;
+            //selector of main menu is there
+            menu = mainMenuBlock(numberOfIterationOfProgram,menu,in);
+            //shows files in chosen directory
+            showingFilesInTheDirectory(menu, 
+                                        in,
+                                        lengthOfFiles,
+                                        path,
+                                        exitFromProgramCase,
+                                        os);
+            numberOfIterationOfProgram++;
+        }	
+    }    
+    public static String mainMenuBlock(int numberOfIterationOfProgram,String menu,Scanner in){
+        if(numberOfIterationOfProgram>0)
             {
                     System.out.println("1-exit, 2-continue");
                     menu = in.nextLine();
@@ -21,7 +37,133 @@ public class Helloworld {
             else{
                     System.out.println("This progam will allow you to list content of directory that you can choose");
             }
-            switch(menu){
+        return menu;
+    }
+    public static String operatingSystemMenuBlock(boolean exitFromProgramCase,int os, String path){
+        for(;exitFromProgramCase==false;){
+            switch (os){
+                case 1:
+                    System.out.println("You have chosed 1-Windows");
+                    exitFromProgramCase = true;
+                    break;
+                case 2:
+                    System.out.println("You have chosed 2-Linux");
+                    exitFromProgramCase = true;
+                    path = "/";
+                    break;
+                default:
+                    System.out.println("!!!I don't know such OS, try again");
+            }
+        }
+        return path;
+    }
+    public static void displayingOfContentOfDirectory(int amountofpages,
+                                                        Scanner in,
+                                                        String punktMenuOfLists,
+                                                        int currentDecadeOfFiles,
+                                                        int numberOfFilesPerPage,
+                                                        int lengthOfFiles,
+                                                        int quantityOfList,
+                                                        boolean exitFromWhile,
+                                                        File[] files){
+        do{
+            System.out.println("next page \"n\", previous page \"b\", \"e\" to exit \n"
+                    + "or you can choose page. enter pagenumber to go on direct page (the number of pages allowed = "
+                    + amountofpages);
+            punktMenuOfLists = in.nextLine();
+            int nextDecade = currentDecadeOfFiles+numberOfFilesPerPage,
+                    previousDecade = currentDecadeOfFiles-numberOfFilesPerPage,
+                    amountOfDecades = ((lengthOfFiles/numberOfFilesPerPage)*numberOfFilesPerPage),
+                    amountOfFilesOnPage = (lengthOfFiles%numberOfFilesPerPage);
+            //menu for changing pages of files that are viewed
+            switch(punktMenuOfLists)
+            {
+                //exit from that block (to go in the main menu)
+                case "e":
+                    exitFromWhile = true;
+                    break;
+                    //display a page that is situated before current one
+                case "b":
+                    if(previousDecade>=0){
+                        currentDecadeOfFiles-=numberOfFilesPerPage;
+                        quantityOfList=numberOfFilesPerPage;                                                                            
+                    }else{
+                        currentDecadeOfFiles=amountOfDecades;
+                        quantityOfList = amountOfFilesOnPage;
+                        if(quantityOfList==0){
+                            quantityOfList=numberOfFilesPerPage;
+                            currentDecadeOfFiles=amountOfDecades-numberOfFilesPerPage;                                                                                
+                        }
+                    }
+                    for(int i = 0; i < quantityOfList; i++){
+                                System.out.println(files[currentDecadeOfFiles+i]);
+                        }
+                    break;
+                    //display a page that is situated after current one
+                case "n":                                                                                                                                        
+                    if(nextDecade==amountOfDecades){
+                            currentDecadeOfFiles+=numberOfFilesPerPage;
+                            quantityOfList = amountOfFilesOnPage;
+                            if(quantityOfList==0){
+                                quantityOfList=numberOfFilesPerPage;
+                                currentDecadeOfFiles=0;
+                            }
+                            for(int i = 0; i < quantityOfList; i++){
+                                System.out.println(files[currentDecadeOfFiles+i]);
+                            }
+                    }  
+                    if(nextDecade<amountOfDecades){
+                        currentDecadeOfFiles+=numberOfFilesPerPage;
+                        quantityOfList=numberOfFilesPerPage;
+                        for(int i = 0; i < quantityOfList; i++){
+                                System.out.println(files[currentDecadeOfFiles+i]);
+                        }
+                    }
+                    if((nextDecade>amountOfDecades)){
+                        currentDecadeOfFiles=0;
+                        quantityOfList=numberOfFilesPerPage;
+                        for(int i = 0; i < quantityOfList; i++){
+                            System.out.println(files[currentDecadeOfFiles+i]);
+                        }
+                    }
+                    break;
+                    //the block that chooses between incorrect input and number of page that you want to display
+                default:
+                    int numberofpageinmenu = 0;
+                    try{
+                        numberofpageinmenu = Integer.parseInt(punktMenuOfLists);
+                        if((numberofpageinmenu<amountofpages)&&(numberofpageinmenu>0)){
+                           quantityOfList = numberOfFilesPerPage;
+                           currentDecadeOfFiles = (numberofpageinmenu-1)*numberOfFilesPerPage;
+                           for(int i = 0; i < quantityOfList; i++){
+                                System.out.println(files[currentDecadeOfFiles+i]);
+                            }
+                        }
+                        if((numberofpageinmenu==amountofpages)&&(numberofpageinmenu>0)){
+                            quantityOfList = amountOfFilesOnPage;
+                            currentDecadeOfFiles = (numberofpageinmenu-1)*numberOfFilesPerPage;
+                            for(int i = 0; i < quantityOfList; i++){
+                                System.out.println(files[currentDecadeOfFiles+i]);
+                            }
+                        }
+                        if(!((numberofpageinmenu<=amountofpages)&&(numberofpageinmenu>0))){
+                            System.out.println("!!!that number of page is not available, try more");
+                        }
+                    }
+                    catch(NumberFormatException e){
+                         System.out.println("!!!this case is not available, try more");
+                    }                                                            
+                    break;
+            }
+        }while(!exitFromWhile);
+    }
+    public static void showingFilesInTheDirectory(String menu, 
+                                                        Scanner in,
+                                                        int lengthOfFiles,
+                                                        String path,
+                                                        boolean exitFromProgramCase,
+                                                        int os){
+        switch(menu){
                 case "1":{
                     System.exit(0);
                 }
@@ -29,127 +171,39 @@ public class Helloworld {
                     menu = "";
                     System.out.println("Choose your operating system (1-Windows, 2-Linux:");
                     os = in.nextInt();
-                    for(;exitfromprogramcase==false;){
-                            switch (os){
-                                    case 1:
-                                            System.out.println("You have chosed 1-Windows");
-                                            exitfromprogramcase = true;
-                                            break;
-                                    case 2:
-                                            System.out.println("You have chosed 2-Linux");
-                                            exitfromprogramcase = true;
-                                            path = "/";
-                                            break;
-                                    default:
-                                            System.out.println("!!!I don't know such OS, try again");
-                            }
-                    }
                     System.out.println("Write a way to your folder");
                     in.nextLine();
+                    //selector of os menu (choosing needed os)
+                    path = operatingSystemMenuBlock(exitFromProgramCase, os, path);
                     path = path + in.nextLine();
                     File myFolder = new File(path);
                     File[] files = myFolder.listFiles();
-                    lengthoffiles = files.length;					
+                    lengthOfFiles = files.length;					
                     {
-                        int currentdecadeoffiles = 0, quantityoflist=10;
-                        boolean exitfromwhile = false;
-                        String punktmenuoflists = "";
-                        for(int i = 0; i < quantityoflist; i++){
+                        int currentDecadeOfFiles = 0, quantityOfList=10;
+                        boolean exitFromWhile = false;
+                        String punktMenuOfLists = "";
+                        for(int i = 0; i < quantityOfList; i++){
                                         System.out.println(files[i]);
-                                }
-                        int numberoffilesperpage=10,
-                                amountofpages = 0;
-                        if((lengthoffiles%numberoffilesperpage)==0){
-                            amountofpages = lengthoffiles/numberoffilesperpage;
-                        }else{
-                            amountofpages = lengthoffiles/numberoffilesperpage + 1;
                         }
-                        do{
-                            System.out.println("next page \"n\", previous page \"b\", \"e\" to exit \n"
-                                    + "or you can choose page. enter pagenumber to go on direct page (the number of pages allowed = "
-                                    + amountofpages);
-                            punktmenuoflists = in.nextLine();
-                            int nextdecade = currentdecadeoffiles+numberoffilesperpage,
-                                    previousdecade = currentdecadeoffiles-numberoffilesperpage,
-                                    amountofdecades = ((lengthoffiles/numberoffilesperpage)*numberoffilesperpage),
-                                    amountoffilesonpage = (lengthoffiles%numberoffilesperpage);
-                            switch(punktmenuoflists)
-                            {
-                                case "e":
-                                    exitfromwhile = true;
-                                    break;
-                                case "b":
-                                    if(previousdecade>=0){
-                                        currentdecadeoffiles-=numberoffilesperpage;
-                                        quantityoflist=numberoffilesperpage;                                                                            
-                                    }else{
-                                        currentdecadeoffiles=amountofdecades;
-                                        quantityoflist = amountoffilesonpage;
-                                        if(quantityoflist==0){
-                                            quantityoflist=numberoffilesperpage;
-                                            currentdecadeoffiles=amountofdecades-numberoffilesperpage;                                                                                
-                                        }
-                                    }
-                                    for(int i = 0; i < quantityoflist; i++){
-                                                System.out.println(files[currentdecadeoffiles+i]);
-                                        }
-                                    break;
-                                case "n":                                                                                                                                        
-                                    if(nextdecade==amountofdecades){
-                                            currentdecadeoffiles+=numberoffilesperpage;
-                                            quantityoflist = amountoffilesonpage;
-                                            if(quantityoflist==0){
-                                                quantityoflist=numberoffilesperpage;
-                                                currentdecadeoffiles=0;
-                                            }
-                                            for(int i = 0; i < quantityoflist; i++){
-                                                System.out.println(files[currentdecadeoffiles+i]);
-                                            }
-                                    }  
-                                    if(nextdecade<amountofdecades){
-                                        currentdecadeoffiles+=numberoffilesperpage;
-                                        quantityoflist=numberoffilesperpage;
-                                        for(int i = 0; i < quantityoflist; i++){
-                                                System.out.println(files[currentdecadeoffiles+i]);
-                                        }
-                                    }
-                                    if((nextdecade>amountofdecades)){
-                                        currentdecadeoffiles=0;
-                                        quantityoflist=numberoffilesperpage;
-                                        for(int i = 0; i < quantityoflist; i++){
-                                            System.out.println(files[currentdecadeoffiles+i]);
-                                        }
-                                    }
-                                    break;
-                                default:
-                                    int numberofpageinmenu = 0;
-                                    try{
-                                        numberofpageinmenu = Integer.parseInt(punktmenuoflists);
-                                        if((numberofpageinmenu<amountofpages)&&(numberofpageinmenu>0)){
-                                           quantityoflist = numberoffilesperpage;
-                                           currentdecadeoffiles = (numberofpageinmenu-1)*numberoffilesperpage;
-                                           for(int i = 0; i < quantityoflist; i++){
-                                                System.out.println(files[currentdecadeoffiles+i]);
-                                            }
-                                        }
-                                        if((numberofpageinmenu==amountofpages)&&(numberofpageinmenu>0)){
-                                            quantityoflist = amountoffilesonpage;
-                                            currentdecadeoffiles = (numberofpageinmenu-1)*numberoffilesperpage;
-                                            for(int i = 0; i < quantityoflist; i++){
-                                                System.out.println(files[currentdecadeoffiles+i]);
-                                            }
-                                        }
-                                        if(!((numberofpageinmenu<=amountofpages)&&(numberofpageinmenu>0))){
-                                            System.out.println("!!!that number of page is not available, try more");
-                                        }
-                                    }
-                                    catch(NumberFormatException e){
-                                         System.out.println("!!!this case is not available, try more");
-                                    }
-                                                            
-                                    break;
-                            }
-                        }while(!exitfromwhile);
+                        int numberOfFilesPerPage=10,
+                                amountOfPages = 0;
+                        //defines if the number of files is even ot not
+                        if((lengthOfFiles%numberOfFilesPerPage)==0){
+                            amountOfPages = lengthOfFiles/numberOfFilesPerPage;
+                        }else{
+                            amountOfPages = lengthOfFiles/numberOfFilesPerPage + 1;
+                        }
+                        //this function allows displaying files in the chosen directory in pages and allows switching between them
+                        displayingOfContentOfDirectory(amountOfPages, 
+                                in, 
+                                punktMenuOfLists, 
+                                currentDecadeOfFiles,
+                                numberOfFilesPerPage,
+                                lengthOfFiles,
+                                quantityOfList,
+                                exitFromWhile,
+                                files);
                     }
                     break;
                 }
@@ -158,8 +212,5 @@ public class Helloworld {
                     break;
                 }
             }
-            numberofiterationofprogram++;
-        }	
     }
-    
 }
